@@ -58,6 +58,8 @@ public class PlayerControllerX : MonoBehaviour
     {
         explosionParticle.Play();
         playerAudio.PlayOneShot(explodeSound, 1.0f);
+        this.playerRb.velocity = Vector3.zero;
+        this.playerRb.constraints = RigidbodyConstraints.FreezeAll;
         gameOver = true;
         Debug.Log("Game Over!");
     }
