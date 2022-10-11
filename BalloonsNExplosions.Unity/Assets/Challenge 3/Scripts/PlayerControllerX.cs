@@ -17,6 +17,9 @@ public class PlayerControllerX : MonoBehaviour
     public AudioClip moneySound;
     public AudioClip explodeSound;
 
+    private float topLimit = 18.0f;
+    private float bottomLimit = 0.0f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +33,11 @@ public class PlayerControllerX : MonoBehaviour
 
     }
 
+    private bool PlayerIsOutOfBounds()
+    {
+        return this.transform.position.y < this.bottomLimit || this.transform.position.y > this.topLimit;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -38,6 +46,20 @@ public class PlayerControllerX : MonoBehaviour
         {
             playerRb.AddForce(Vector3.up * floatForce);
         }
+
+        if (!gameOver && this.PlayerIsOutOfBounds())
+        {
+            this.Explode();
+        }
+
+    }
+
+    private void Explode()
+    {
+        explosionParticle.Play();
+        playerAudio.PlayOneShot(explodeSound, 1.0f);
+        gameOver = true;
+        Debug.Log("Game Over!");
     }
 
     private void OnCollisionEnter(Collision other)
@@ -45,10 +67,8 @@ public class PlayerControllerX : MonoBehaviour
         // if player collides with bomb, explode and set gameOver to true
         if (other.gameObject.CompareTag("Bomb"))
         {
-            explosionParticle.Play();
-            playerAudio.PlayOneShot(explodeSound, 1.0f);
-            gameOver = true;
-            Debug.Log("Game Over!");
+            this.Explode();
+
             Destroy(other.gameObject);
         } 
 
